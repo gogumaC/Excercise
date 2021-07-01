@@ -3,6 +3,7 @@ package com.example.excercise
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -16,6 +17,22 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
+
+object RetrofitClient{
+
+    private var instance:Retrofit?=null
+    private var gson= GsonBuilder().setLenient().create()
+    private const val BASE_URL="https://api.github.com/"
+
+    //singleTon
+    fun getInstance():Retrofit{
+        if(instance==null){
+            instance=Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(gson)).build()
+        }
+        return instance!!
+    }
+
+}
 //object RetrofitBuilder {
 //    var api : API
 //
@@ -32,16 +49,17 @@ import java.net.URL
 class MainActivity : AppCompatActivity() {
 
 
-    interface RetrofitService{
+    interface RetrofitService {
         @GET("/users/gogumaC")
         fun getInfo()
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
 
-        val text=findViewById<TextView>(R.id.textView)
+        val text = findViewById<TextView>(R.id.textView)
 //        CoroutineScope(IO).launch{
 //            val url= URL("http://54.180.209.151:3000/api-docs/")
 //            val http=url.openConnection() as HttpURLConnection
@@ -63,9 +81,10 @@ class MainActivity : AppCompatActivity() {
         //https://jsonplaceholder.typicode.com/posts/1
     }
 
-    val rf=Retrofit.Builder().baseUrl("https://api.github.com/")
+    val rf = Retrofit.Builder().baseUrl("https://api.github.com/")
         .addConverterFactory(GsonConverterFactory.create()).build()
-    var regionServer:RetrofitService?=rf.create(RetrofitService::class.java)
+    var regionServer: RetrofitService? = rf.create(RetrofitService::class.java)
+}
 
 
 
