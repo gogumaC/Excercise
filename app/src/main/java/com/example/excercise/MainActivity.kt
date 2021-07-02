@@ -39,7 +39,7 @@ object RetrofitBuilder {
 
 interface SignUp{
     @Headers(
-
+        //"accept: application/json", ->뭔역할인지는 모르겠다.
         "Content-Type: application/json")
     @POST("api/auth/signUp")
     fun createUser(@Body user:SignUpInfo):Call<SignUpRes>
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("response",response.toString())
                 Log.d("response",response.body().toString())
                 Log.d("response",response.message())
-                Log.d("response",response.errorBody().toString())
+                Log.d("response",response.errorBody()!!.string())
                 
                //Log.d("response",response.message())
                 if(!response.body().toString().isEmpty()){
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 }
 //실패시
 //body respnse body
-data class SignUpInfo(val type:String="email",val email:String="aaa@gmail.com",val user_id:String="hello",val user_pw:String="android",
-    val nickname: String="gogumac",val marketing:Permission=Permission(),val birth: Date = SimpleDateFormat("yyyy-MM-dd").parse("1999-02-21"))
+data class SignUpInfo(val type:String="email",val email:String="bba@gmail.com",val user_id:String="hsello",val user_pw:String="android888",
+    val nickname: String="gogumad",val marketing:Permission=Permission(),val birth: Date = SimpleDateFormat("yyyy-MM-dd").parse("1999-02-21"))
 data class Permission(val permission:Boolean=false)
 data class SignUpRes(var message:String?=null)
