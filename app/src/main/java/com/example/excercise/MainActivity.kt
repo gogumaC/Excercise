@@ -13,7 +13,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
-import java.sql.Date
+import java.text.DateFormat
+
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.logging.Level.parse
 
 
 object RetrofitBuilder {
@@ -71,14 +75,12 @@ class MainActivity : AppCompatActivity() {
         })
         //enqueue : 인터페이스로부터 함수호출가능 -> enqueue(callback)하면 백그라운드 쓰레드에서 요청수행한후 콜백은 현제스레드에서 처리
 
-
-
      }
 
 }
 
 
 data class SignUpInfo(val type:String="email",val email:String="aaa@gmail.com",val user_id:String="hello",val user_pw:String="android",
-    val nickname: String="gogumac",val marketing:Marketing=Marketing(),val birth: Date =Date(1999,2,21))
+    val nickname: String="gogumac",val marketing:Marketing=Marketing(),val birth: Date = SimpleDateFormat("yyyy-MM-dd").parse("1999-02-21"))
 data class Marketing(val permission:Boolean=false)
 data class SignUpRes(var message:String?=null)
