@@ -1,10 +1,10 @@
 package com.example.excercise
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
-import com.google.gson.annotations.SerializedName
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,15 +14,12 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
-import java.text.DateFormat
-
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.Level.parse
-
 
 object RetrofitBuilder {
     var signUp:SignUp
+    var signIn:SignIn
 
     init {
         val retrofit = Retrofit.Builder()
@@ -33,6 +30,7 @@ object RetrofitBuilder {
 
         //여기는 약간 레트로핏 인스턴스에 기능추가하는 느낌 인터페이스 추가해줌줌
         signUp=retrofit.create(SignUp::class.java)
+        signIn=retrofit.create(SignIn::class.java)
     }
 }
 
@@ -45,41 +43,50 @@ interface SignUp{
     fun createUser(@Body user:SignUpInfo):Call<SignUpRes>
 }
 
-interface getQuery{
-    @GET("api/community/postings")
-    fun getQuery():Call<SignUpRes>
+interface SignIn{
+    @Headers(
+        //"accept: application/json", ->뭔역할인지는 모르겠다.
+        "Content-Type: application/json")
+    @POST("api/auth/signUp")
+    fun signIn(@Body user:SignInInfo):Call<SignInRes>
 }
+//interface getQuery{
+//    @GET("api/community/postings")
+//    fun getQuery():Call<SignUpRes>
+//}
 
 
 class MainActivity : AppCompatActivity() {
+
+
     val ID="hello"
     val PASSWORD="android"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        val sp=getSharedPreferences("token",Context.MODE_PRIVATE)
+        val tex=sp.getString("token","")
+        val spEditor=sp.edit()
 
         val text = findViewById<TextView>(R.id.textView)
 
-        val sendSignUpInfo=SignUpInfo()
-        RetrofitBuilder.signUp.createUser(sendSignUpInfo).enqueue(object:Callback<SignUpRes>{
-            override fun onResponse(call: Call<SignUpRes>, response: Response<SignUpRes>) {
 
-                //왜 바디가 없지 바디역할은 뭘까
-                Log.d("response",response.toString())
-                Log.d("response",response.body().toString())
-                Log.d("response",response.message())
-                Log.d("response",response.errorBody()!!.string())
-                
-               //Log.d("response",response.message())
-                if(!response.body().toString().isEmpty()){
-                    text.setText(response.body()?.message)
-                }
+
+        val sendSignInInfo=SignInInfo()
+        RetrofitBuilder.signIn.signIn(sendSignInInfo).enqueue(object:Callback<SignInRes>{
+            override fun onResponse(call: Call<SignInRes>, response: Response<SignInRes>) {
+                Log.d("response","eerr :"+response.errorBody()!!.string())
+                Log.d("response","body : "+response.body().toString())
+                //sp쓰기
+                //spEditor.putString("token","tempToken").commit()
+                //spEditor.putString("token",response.body()?.access_token).commit()
+                //sp읽기
+                Log.d("response",sp.getString("token","NO TOKEN").toString())
 
             }
 
-            override fun onFailure(call: Call<SignUpRes>, t: Throwable) {
-                Log.d("response","sign in failed")
+            override fun onFailure(call: Call<SignInRes>, t: Throwable) {
+
             }
         })
         //enqueue : 인터페이스로부터 함수호출가능 -> enqueue(callback)하면 백그라운드 쓰레드에서 요청수행한후 콜백은 현제스레드에서 처리
@@ -93,3 +100,5 @@ data class SignUpInfo(val type:String="email",val email:String="bba@gmail.com",v
     val nickname: String="gogumad",val marketing:Permission=Permission(),val birth: Date = SimpleDateFormat("yyyy-MM-dd").parse("1999-02-21"))
 data class Permission(val permission:Boolean=false)
 data class SignUpRes(var message:String?=null)
+data class SignInInfo(val type:String="eamil",val email:String="bba@gmail.com",val user_pw: String="android888",val firebase_token:String="")
+data class SignInRes(val staus:Int,val access_token:String,val refresh_token:String?)
