@@ -13,6 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import java.sql.Date
 
 
 object RetrofitBuilder {
@@ -52,7 +53,8 @@ class MainActivity : AppCompatActivity() {
         val sendSignUpInfo=SignUpInfo()
         RetrofitBuilder.signUp.createUser(sendSignUpInfo).enqueue(object:Callback<SignUpRes>{
             override fun onResponse(call: Call<SignUpRes>, response: Response<SignUpRes>) {
-               // Log.d("response","sign in successed")
+
+                //왜 바디가 없지 바디역할은 뭘까
                 Log.d("response",response.toString())
                 Log.d("response",response.body().toString())
                 Log.d("response",response.message())
@@ -77,6 +79,6 @@ class MainActivity : AppCompatActivity() {
 
 
 data class SignUpInfo(val type:String="email",val email:String="aaa@gmail.com",val user_id:String="hello",val user_pw:String="android",
-    val nickname: String="gogumac",val marketing:Marketing=Marketing(),val birth:String="")
+    val nickname: String="gogumac",val marketing:Marketing=Marketing(),val birth: Date =Date(1999,2,21))
 data class Marketing(val permission:Boolean=false)
 data class SignUpRes(var message:String?=null)
