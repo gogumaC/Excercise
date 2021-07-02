@@ -11,6 +11,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import java.text.DateFormat
@@ -37,10 +38,15 @@ object RetrofitBuilder {
 
 
 interface SignUp{
-    @POST("api/auth/signUp")
     @Headers("accept: application/json",
         "content-type: application/json")
+    @POST("api/auth/signUp")
     fun createUser(@Body user:SignUpInfo):Call<SignUpRes>
+}
+
+interface getQuery{
+    @GET("api/community/postings")
+    fun getQuery():Call<SignUpRes>
 }
 
 
